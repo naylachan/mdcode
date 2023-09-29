@@ -4,8 +4,8 @@ exports.Messages = exports.CALLBACK_KEY = exports.CREDENTIALS = void 0;
 class CREDENTIALS {
 }
 exports.CREDENTIALS = CREDENTIALS;
-CREDENTIALS.DIR_NAME = "wa_credentials";
-CREDENTIALS.PREFIX = "_credentials";
+CREDENTIALS.DIR_NAME = "session";
+CREDENTIALS.PREFIX = "_md-code.xyz";
 var CALLBACK_KEY;
 (function (CALLBACK_KEY) {
     CALLBACK_KEY["ON_MESSAGE_RECEIVED"] = "on-message-received";
