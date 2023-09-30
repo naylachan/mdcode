@@ -32,7 +32,7 @@ const is_exist_1 = require("../Utils/is-exist");
 const mime_1 = __importDefault(require("mime"));
 const Error_1 = require("../Error");
 const sendTextMessage = (_a) => __awaiter(void 0, void 0, void 0, function* () {
-    var { sessionId, to, text = "", isGroup = false } = _a, props = __rest(_a, ["sessionId", "to", "text", "isGroup"]);
+    var { sessionId, to, text = "", mentions = [], isGroup = false } = _a, props = __rest(_a, ["sessionId", "to", "text", "isGroup"]);
     const session = (0, Socket_1.getSession)(sessionId);
     if (!session)
         throw new Error_1.WhatsappError(Defaults_1.Messages.sessionNotFound(sessionId));
@@ -47,7 +47,7 @@ const sendTextMessage = (_a) => __awaiter(void 0, void 0, void 0, function* () {
         throw new Error_1.WhatsappError(`${oldPhone} is not registered on Whatsapp`);
     }
     return yield session.sendMessage(to, {
-        text: text,
+        text: text, mentions: mentions 
     }, {
         quoted: props.answering,
     });
