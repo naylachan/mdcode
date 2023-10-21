@@ -13,7 +13,6 @@ var __createBinding = (this && this.__createBinding) || (Object.create ? (functi
 var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
-console.log(`[ CONNECT ] MdCode • WEB "https://md-code.xyz"`)
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./Socket"), exports);
 __exportStar(require("./Messaging"), exports);
