@@ -5,7 +5,7 @@ class CREDENTIALS {
 }
 exports.CREDENTIALS = CREDENTIALS;
 CREDENTIALS.DIR_NAME = "session";
-CREDENTIALS.PREFIX = "_md-code.xyz";
+CREDENTIALS.PREFIX = "_md";
 var CALLBACK_KEY;
 (function (CALLBACK_KEY) {
     CALLBACK_KEY["ON_MESSAGE_RECEIVED"] = "on-message-received";
