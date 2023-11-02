@@ -4,9 +4,9 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {  
-    mongoose.set('strictQuery', false); 
+    mongoose.set('strictQuery', false);       
     const conn = await mongoose.connect("mongodb+srv://mdcodewebsite:mdcodewebsite@atlascluster.rxwo2px.mongodb.net/?retryWrites=true&w=majority", { 
-     useNewUrlParser: true,
+      useNewUrlParser: true,
       useUnifiedTopology: true    
     });    
     console.log("[ INFO ] Terhubung ke database MongoDb");
@@ -19,6 +19,7 @@ connectDB()
 
 const userDb = require('./user.js'); 
 const kuisDb = require('./kuis.js'); 
+const UTDb = require('./ulartangga.js'); 
 
 function error(a){
   console.log(a)
@@ -78,8 +79,6 @@ exports.updateUser = async (db, user, query) => { //updateUser(db, user, query)
   }
 }
 
-
-
 exports.cekKuis = async (group) => { // md.cekKuis(idgrub)
   if (!group){
     return kuisDb.find({});
@@ -106,6 +105,7 @@ exports.cekKuisId = async (group, id) => { // md.cekKuisId(idgrub, id)
     return "false"
   }
 };
+
 exports.addKuis = async (id, group, user, kuis, index, jawab) => { // md.addKuis(id, group, user, kuis, index, jawab)  
   if (!id && !group || !user || !kuis || !index) return error("Prameter kosong")   
   var doc = await kuisDb.findOne({ group: group });
@@ -192,6 +192,7 @@ exports.updateKuisId = async (group, newId) => { //updateKuisId(grub, data)
     console.error(error);    
   }
 }
+
 exports.updateKuisJawab = async (group, newJawab) => { //updateKuisJawab(grub, data)
   if (!group || !newJawab) return error("Parameter kosong");
 
@@ -208,4 +209,123 @@ exports.updateKuisJawab = async (group, newJawab) => { //updateKuisJawab(grub, d
   }
 }
 
+exports.cekUT = async (group) => { // md.cekUT(group)  
+  var doc = await UTDb.findOne({ group: group });
+  if (doc == null){
+    doc = "false"        
+  }  
+  return doc
+};
 
+exports.addUT = async (group, user) => { // md.addUT(group, user)  
+  var doc = await UTDb.findOne({ group: group });
+  if (doc == null){     
+    new UTDb({
+      id: "false",
+      group: group,
+      start: user,
+      status: "false",
+      giliran: 1,
+      join: []
+    }).save((error) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(`[ DATABASE ] Menambahkan room UT grub id ${group.split("@")[0]} di database`);        
+      }  
+    })
+  }
+}
+exports.joinUT = async (group, user) => { // md.joinUT(idgrub, user)
+  const doc1 = await UTDb.findOne({ group: group });  
+  if (doc1 !== null) {    
+    var doc = await UTDb.findOneAndUpdate({ group: group }, { $push: { join: {
+      player: doc1.join.length + 1,
+      user: user,
+      nomer: 1
+    } } }, { new: true });
+    if (doc) {
+      console.log(`[ DATABASE ] ${user.split("@")[0]} bergabung ke UT di grub ${group.split("@")[0]}`);
+      return {
+        status: true
+      }
+    } else {
+      error(`Data dengan group ${group} tidak ditemukan.`);
+    }
+  }
+}
+
+exports.removeUT = async (group) => { // md.removeUT(idgrub)
+  if (!group) return error("Parameter kosong");    
+  
+  var doc = await UTDb.deleteOne({ group: group });
+  if (doc.deletedCount > 0) {
+    console.log(`[ DATABASE ] Menghapus room UT grup id ${group.split("@")[0]} dari database`);
+    return {
+      status: "true"
+    }
+  } else {
+    return error(`[ DATABASE ] Data dengan grup id ${group.split("@")[0]} tidak ditemukan`);
+  }  
+}
+
+exports.updateUTStatus = async (group, newStatus) => { //updateUTStatus(grub, data)
+  if (!group || !newStatus) return error("Parameter kosong");
+  try {
+    const result = await UTDb.findOneAndUpdate({ group: group }, { $set: { status: newStatus } }, { new: true });
+    if (result) {
+      console.log(`[ DATABASE ] Mengganti status room UT grup id ${group.split("@")[0]} di database`);
+      return { status: "true" };
+    } else {
+      error(`[ DATABASE ] Tidak ada room UT dengan grup id ${group.split("@")[0]}`);      
+    }
+  } catch (error) {
+    console.error(error);    
+  }
+}
+
+exports.cekUTId = async (group, id) => { // md.cekUTId(idgrub, id)
+  if (!group){
+    return UTDb.find({});
+  } else {
+    var doc = await UTDb.findOne({ group: group });
+    if (doc == null){      
+      doc = "false"
+    }  
+    if (doc.id == id){
+      return doc
+    }
+    return "false"
+  }
+};
+exports.updateUTId = async (group, newId) => { //updateUTId(grub, data)
+  if (!group || !newId) return error("Parameter kosong");
+
+  try {
+    const result = await UTDb.findOneAndUpdate({ group: group }, { $set: { id: newId } }, { new: true });
+    if (result) {
+      console.log(`[ DATABASE ] Mengganti id room UT grup id ${group.split("@")[0]} di database`);
+      return { status: "true" };
+    } else {
+      error(`[ DATABASE ] Tidak ada room UT dengan grup id ${group.split("@")[0]}`);      
+    }
+  } catch (error) {
+    console.error(error);    
+  }
+}
+
+exports.updateUTGiliran = async (group, nomer) => { //updateUTGiliran(grub, data)
+  if (!group || !nomer) return error("Parameter kosong");
+
+  try {
+    const result = await UTDb.findOneAndUpdate({ group: group }, { $set: { giliran: nomer } }, { new: true });
+    if (result) {
+      console.log(`[ DATABASE ] Mengganti Giliran room UT grup jawab ${group.split("@")[0]} di database`);
+      return { status: "true" };
+    } else {
+      error(`[ DATABASE ] Tidak ada room UT dengan grup jawab ${group.split("@")[0]}`);      
+    }
+  } catch (error) {
+    console.error(error);    
+  }
+}
